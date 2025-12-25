@@ -5,6 +5,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 export default function Home() {
+   const {data: session} = authClient.useSession();
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -14,8 +16,24 @@ export default function Home() {
       email,
       password,
       name,
+    },{
+      onError:()=>{
+        window.alert("Something went wrong!");
+      },
+      onSuccess: ()=>{
+        window.alert("User created successfully!");
+      }
     });
   };
+
+  if(session){
+    return(
+      <div className="flex flex-col p-4 gap-y-4">
+        <p>Logged in as {session.user.name}</p>
+        <button onClick={()=>authClient.signOut()}>Sign out</button>
+      </div>
+    )
+  }
 
   return (
     <div className="p-4 flex flex-col gap-y-3">
@@ -34,7 +52,7 @@ export default function Home() {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
       />
-      <Button>
+      <Button onClick={onSubmit}>
         Create user
       </Button>
     </div>

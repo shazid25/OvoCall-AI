@@ -1,117 +1,132 @@
 "use client";
 
 import { z } from "zod";
+import Link from "next/link";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
+import { useRouter } from "next/navigation";
 import { OctagonAlertIcon } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 
+import { authClient } from "@/lib/auth-client";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
 } from "@/components/ui/form";
 
-// 1. Define the validation schema
 const fromSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(1, { message: "Password is required" }),
+    email: z.string().email(),
+    password: z.string().min(1, { message: "Password is required" }),
 });
 
 export const SignInView = () => {
-  // 2. Initialize the form hook using the variable name 'from' as requested
-  const from = useForm<z.infer<typeof fromSchema>>({
-    resolver: zodResolver(fromSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
+    const router = useRouter();
+    const [pending, setPending] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
-  // 3. Define the submit handler
-  const onSubmit = (values: z.infer<typeof fromSchema>) => {
-    console.log(values);
-  };
+    const from = useForm<z.infer<typeof fromSchema>>({
+        resolver: zodResolver(fromSchema),
+        defaultValues: { email: "", password: "" },
+    });
 
-  return (
-    <div className="flex flex-col gap-6">
-      <Card className="overflow-hidden p-0">
-        <CardContent className="grid p-0 md:grid-cols-2">
-          {/* Form Section (Col 1) */}
-          <Form {...from}>
-            <form 
-              onSubmit={from.handleSubmit(onSubmit)} 
-              className="p-6 md:p-8 flex flex-col gap-6"
-            >
-              <div className="flex flex-col items-center text-center">
-                <h1 className="text-2xl font-bold">Welcome back</h1>
-                <p className="text-muted-foreground text-balance">
-                  Login to your account
-                </p>
-              </div>
+    const onSubmit = async (data: z.infer<typeof fromSchema>) => {
+        setError(null);
+        setPending(true);
+        await authClient.signIn.email(
+            { email: data.email, password: data.password },
+            {
+                onSuccess: () => {
+                    setPending(false);
+                    router.push("/");
+                },
+                onError: ({ error }) => {
+                    setPending(false);
+                    setError(error.message);
+                },
+            }
+        );
+    };
 
-              <div className="grid gap-4">
-                {/* Email Field */}
-                <FormField
-                  control={from.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email</FormLabel>
-                      <FormControl>
-                        <Input 
-                          type="email" 
-                          placeholder="yourEmail@example.com" 
-                          {...field} 
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+    return (
+        <div className="flex flex-col gap-6">
+            <Card className="overflow-hidden p-0">
+                <CardContent className="grid p-0 md:grid-cols-2">
+                    <Form {...from}>
+                        <form onSubmit={from.handleSubmit(onSubmit)} className="p-6 md:p-8 flex flex-col gap-6">
+                            <div className="flex flex-col items-center text-center">
+                                <h1 className="text-2xl font-bold">Welcome back</h1>
+                                <p className="text-muted-foreground text-balance">Login to your account</p>
+                            </div>
 
-                {/* Password Field */}
-                <FormField
-                  control={from.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <div className="flex items-center justify-between">
-                        <FormLabel>Password</FormLabel>
-                        <a href="#" className="text-sm underline-offset-4 hover:underline">
-                          Forgot your password?
-                        </a>
-                      </div>
-                      <FormControl>
-                        <Input type="password" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+                            <div className="grid gap-4">
+                                <FormField
+                                    control={from.control}
+                                    name="email"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Email</FormLabel>
+                                            <FormControl><Input type="email" placeholder="m@example.com" {...field} /></FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={from.control}
+                                    name="password"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <div className="flex items-center justify-between">
+                                                <FormLabel>Password</FormLabel>
+                                                <Link href="#" className="text-sm underline-offset-4 hover:underline">Forgot password?</Link>
+                                            </div>
+                                            <FormControl><Input type="password" placeholder="******" {...field} /></FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
 
-                <Button type="submit" className="w-full">
-                  Login
-                </Button>
-              </div>
-            </form>
-          </Form>
+                                {error && (
+                                    <Alert className="bg-destructive/10 border-none">
+                                        <OctagonAlertIcon className="h-4 w-4 !text-destructive" />
+                                        <AlertTitle className="text-destructive text-xs">{error}</AlertTitle>
+                                    </Alert>
+                                )}
 
-          {/* Visual Section (Col 2) */}
-          <div className="bg-radial from-green-700 to-green-900 relative hidden md:flex flex-col gap-y-4 items-center justify-center">
-            <img src="/logo.svg" alt="Image" className="h-[92px] w-[92px]" />
-            <p className="text-2xl font-semibold text-white">
-              OvoCall AI
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-    </div>
-  );
+                                <Button disabled={pending} type="submit" className="w-full">Sign in</Button>
+
+                                <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
+                                    <span className="bg-card text-muted-foreground relative z-10 px-2">Or continue with</span>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <Button variant="outline" type="button" className="w-full">Google</Button>
+                                    <Button variant="outline" type="button" className="w-full">Github</Button>
+                                </div>
+
+                                <div className="text-center text-sm">
+                                    Don&apos;t have an account?{" "}
+                                    <Link href="/sign-up" className="underline underline-offset-4">Sign up</Link>
+                                </div>
+                            </div>
+                        </form>
+                    </Form>
+                    <div className="bg-radial from-green-700 to-green-900 relative hidden md:flex flex-col gap-y-4 items-center justify-center">
+                        <img src="/logo.svg" alt="Logo" className="h-[92px] w-[92px]" />
+                        <p className="text-2xl font-semibold text-white">OvoCall AI</p>
+                    </div>
+                </CardContent>
+            </Card>
+            <div className="text-muted-foreground text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
+                By clicking continue, you agree to our <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>
+            </div>
+        </div>
+    );
 };

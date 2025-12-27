@@ -128,3 +128,118 @@
     @apply bg-background text-foreground;
   }
 }
+
+
+/* My added CSS */
+
+/* Add to your global.css or tailwind.config.js */
+@keyframes gradient {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+
+@keyframes progress {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px) rotate(0deg); opacity: 0.3; }
+    50% { transform: translateY(-20px) rotate(180deg); opacity: 1; }
+}
+
+@keyframes spin-reverse {
+    from { transform: rotate(360deg); }
+    to { transform: rotate(0deg); }
+}
+
+@keyframes fade-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-gradient {
+    background-size: 200% 200%;
+    animation: gradient 3s ease infinite;
+}
+
+.animate-progress {
+    animation: progress 2s ease-in-out infinite;
+}
+
+.animate-float {
+    animation: float linear infinite;
+}
+
+.animate-spin-reverse {
+    animation: spin-reverse 2s linear infinite;
+}
+
+.animate-fade-in {
+    animation: fade-in 0.5s ease-out forwards;
+}
+
+
+
+/* Error state */
+
+/* Add to your global.css or tailwind.config.js */
+@keyframes shake {
+    0%, 100% { transform: translateX(0) rotate(0deg); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-2px) rotate(-0.5deg); }
+    20%, 40%, 60%, 80% { transform: translateX(2px) rotate(0.5deg); }
+}
+
+@keyframes error-float {
+    0%, 100% { 
+        transform: translate(0, 0) scale(1); 
+        opacity: 0.2;
+    }
+    25% { 
+        transform: translate(5px, -10px) scale(1.1); 
+        opacity: 0.5;
+    }
+    50% { 
+        transform: translate(-5px, -20px) scale(0.9); 
+        opacity: 0.8;
+    }
+    75% { 
+        transform: translate(8px, -15px) scale(1.05); 
+        opacity: 0.6;
+    }
+}
+
+@keyframes spin-slow {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+}
+
+@keyframes pulse-strong {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.7; }
+}
+
+.animate-shake {
+    animation: shake 0.5s ease-in-out;
+}
+
+.animate-error-float {
+    animation: error-float ease-in-out infinite;
+}
+
+.animate-spin-slow {
+    animation: spin-slow 3s linear infinite;
+}
+
+.animate-blink {
+    animation: blink 1s ease-in-out infinite;
+}
+
+.animate-pulse-strong {
+    animation: pulse-strong 2s ease-in-out infinite;
+}

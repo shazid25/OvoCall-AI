@@ -3,6 +3,7 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 import { LoadingState } from "@/components/loading-state";
+import { ErrorState } from "@/components/error-state";
 
 export const AgentsView = () => {
     const trpc = useTRPC();
@@ -23,5 +24,16 @@ export const AgentsViewLoading = () =>{
         />
 
        
+    )
+}
+
+
+export const AgentsViewError = () =>{
+    return(
+         <ErrorState
+                    title="Error Loading Agents"
+                    description="Something went wrong while loading your AI agents. Please try again."
+                   
+                />
     )
 }

@@ -4,13 +4,14 @@ import { Suspense } from "react";
 // import { AgentsView, AgentsViewError, AgentsViewLoading } from "@/modules/agents/server/ui/views/agents-views";
 import { ErrorBoundary } from "react-error-boundary";
 import { AgentsView, AgentsViewError, AgentsViewLoading } from "@/modules/agents/ui/views/agents-views";
+import { AgentsListHeader } from "@/modules/agents/ui/components/agents-list-header";
 const Page = async () => {
     const queryClient = getQueryClient();
     void queryClient.prefetchQuery(trpc.agents.getMany.queryOptions());
 
     return (
         <>
-        <ListHeader />
+        <AgentsListHeader />
         <HydrationBoundary state={dehydrate(queryClient)}>
            <Suspense 
            fallback={<AgentsViewLoading />}

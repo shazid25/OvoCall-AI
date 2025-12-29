@@ -5,25 +5,15 @@ import { useTRPC } from "@/trpc/client";
 import { LoadingState } from "@/components/loading-state";
 import { ErrorState } from "@/components/error-state";
 import { DataTable } from "../components/data-table";
-import { columns, Payment } from "../components/columns";
-
-
-const mockData: Payment[] = [
-    {
-      id: "728ed52f",
-      amount: 100,
-      status: "pending",
-      email: "m@example.com",
-    },
-  ]
+import { columns } from "../components/columns";
 
 export const AgentsView = () => {
     const trpc = useTRPC();
     const { data } = useSuspenseQuery(trpc.agents.getMany.queryOptions());
 
     return (
-        <div>
-           <DataTable data={mockData} columns={columns} />
+        <div className="flex-1 pb-4 px-4 md:px-8 flex flex-col gap-y-4">
+           <DataTable data={data} columns={columns} />
          </div>
     );
 };

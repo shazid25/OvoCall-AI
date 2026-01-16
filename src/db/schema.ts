@@ -68,7 +68,8 @@ export const meetingStatus = pgEnum("meeting_status", [
     "active",
     "completed",
     "canceled",
-    "progressing"
+    "progressing",
+    "processing"
 ]);
 
 export const meetings = pgTable("meetings", {
@@ -89,6 +90,10 @@ export const meetings = pgTable("meetings", {
         transcriptUrl: text("transcript_url"),
         recordingUrl: text("recording_url"),
         summary: text("summary"),
+
+        //added
+
+        startedAt: timestamp("started_at"),
         createdAt: timestamp("created_at").notNull().defaultNow(),
         updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });

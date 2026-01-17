@@ -178,7 +178,7 @@ export const MeetingForm = ({
         Not found what you&appos;re looking for?{" "}
         <Button
           type="button"
-          className="text-primary hover:underline"
+          className=" hover:underline"
           onClick={() => setOpenNewAgentDialog(true)}
         >
           Create a new agent

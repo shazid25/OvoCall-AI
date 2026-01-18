@@ -30,7 +30,7 @@ const Page = async ({ params }: Props) => {
     return (
         <HydrationBoundary state={dehydrate(queryClient)}>
             <CallView meetingId={meetingId} />
-            'CallView' is not defined.
+            {/* 'CallView' is not defined. */}
         </HydrationBoundary>
     );
 };

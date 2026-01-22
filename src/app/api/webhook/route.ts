@@ -264,7 +264,7 @@ export async function POST(req: NextRequest) {
   // TODO: Call Inngest background job to summarize the transcript
 } else if (eventType === "call.recording_ready") {
   const event = payload as CallRecordingReadyEvent;
-  const meetingId = event.call_cid.split(":")[1]; // call_cid is formatted as "type:id"
+  const meetingId = event.call_cid.split(":")[1]; 
 
   await db
     .update(meetings)

@@ -134,6 +134,7 @@ import {
 import { db } from "@/db";
 import { agents, meetings } from "@/db/schema";
 import { streamVideo } from "@/lib/stream-video";
+import { inngest } from "@/inngest/client";
 
 function verifySignatureWithSDK(body: string, signature: string): boolean {
     return streamVideo.verifyWebhook(body, signature);
@@ -181,7 +182,7 @@ export async function POST(req: NextRequest) {
                     eq(meetings.id, meetingId),
                     not(eq(meetings.status, "completed")),
                     not(eq(meetings.status, "active")),
-                    not(eq(meetings.status, "canceled")), // Fixed: changed "cancelled" to "canceled"
+                    not(eq(meetings.status, "canceled")), 
                     not(eq(meetings.status, "processing"))
                 )
             );
@@ -261,7 +262,14 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Meeting not found" }, { status: 404 });
   }
 
-  // TODO: Call Inngest background job to summarize the transcript
+await inngest.send({
+    name: "meetings/processing",
+    data: {
+        meetingId: updatedMeeting.id,
+        transcriptUrl: updatedMeeting.transcriptUrl,
+    },
+});
+
 } else if (eventType === "call.recording_ready") {
   const event = payload as CallRecordingReadyEvent;
   const meetingId = event.call_cid.split(":")[1]; 

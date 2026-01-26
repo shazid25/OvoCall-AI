@@ -449,6 +449,7 @@ export const meetingsRouter = createTRPCRouter({
                     status: meetings.status,
                     scheduledAt: meetings.scheduledAt,
                     endedAt: meetings.endedAt,
+                    // startedAt: meetings.startedAt,
                     startedAt: meetings.startedAt,
                     transcriptUrl: meetings.transcriptUrl,
                     recordingUrl: meetings.recordingUrl,
